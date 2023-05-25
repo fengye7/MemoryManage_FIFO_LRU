@@ -234,14 +234,15 @@ public class MemManage {
 		}
 
 		logList.addElement(LogString);
-		logData.setSelectedIndex(currentInst-1);// 设置选中的项
-		logData.ensureIndexIsVisible(currentInst-1);
+		logData.setSelectedIndex(currentInst - 1);// 设置选中的项
+		logData.ensureIndexIsVisible(currentInst - 1);
 	}
 
 	// 更新页表
 	public void updatePageTable(int row, String newItem) {
 		qPageTable.setValueAt(newItem, row, 1);
-		qPageTable.setRowSelectionInterval(row, row);//该方法可以选中多行，设为相同值选中一行	
+		pageTable.set(row, Integer.parseInt(newItem));// 更新页表的对应关系
+		qPageTable.setRowSelectionInterval(row, row);// 该方法可以选中多行，设为相同值选中一行
 		Rectangle rect = qPageTable.getCellRect(row, 0, true);
 		qPageTable.scrollRectToVisible(rect);
 	}
@@ -256,6 +257,46 @@ public class MemManage {
 		pageFaultCount++;// 缺页数增加
 		instFaultData.setSelectedIndex(pageFaultCount - 1);
 		instFaultData.ensureIndexIsVisible(pageFaultCount - 1);// 设置跟随显示
+	}
+
+	// 刷新访问记录，便于对相同指令序列使用不同调度算法进行对比
+	public void recover() {
+		// 清空内存块
+		for (var list : vBlockList) {
+			list.clear();
+			list.addElement("访问记录");
+		}
+		// 修改内存块内页号显示
+		for (var pagenum : vLcd) {
+			pagenum.setText("-1");
+		}
+		// 修改页表显示
+		for (int row = 0; row < 32; row++)
+			qPageTable.setValueAt("-1", row, 1);
+
+		// 清空缺页清单
+		instListFault.clear();
+		// 清空访问信息
+		logList.clear();
+
+		// 刷新几个指标
+		currentInst = 0;
+		pageFaultCount = 0;
+
+		// 内存块尚未存放任何逻辑页面
+		for (int i = 0; i < block.size(); i++)
+			block.set(i, -1);
+
+		// 页表内容初始化
+		for (int i = 0; i < pageTable.size(); i++)
+			pageTable.set(i, -1);
+
+		// LRU内存块优先级初始化，全部设为0
+		for (int i = 0; i < priorityLRU.size(); i++)
+			priorityLRU.set(i, 0);
+		
+		//FIFO队列清空
+		queueFIFO.clear();
 	}
 
 	// 调度算法类型

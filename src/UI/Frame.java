@@ -356,6 +356,30 @@ public class Frame extends JFrame {
 		ways_label.setBounds(316, 339, 127, 15);
 		ways_label.setEnabled(false);
 		contentPane.add(ways_label);
+		
+		JButton RecoverButton = new JButton("Recover");
+		RecoverButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//算法选择按钮刷新
+				fifoButton.setEnabled(true);
+				lruButton.setEnabled(true);
+				f1_Button.setEnabled(false);
+				f10_Button.setEnabled(false);
+				fAll_Button.setEnabled(false);
+				//数据刷新
+				MM.recover();
+				//显示的几个数据
+				fedinstnum.setText("0");
+				queinstnum.setText("0");
+				querate.setText("\\");
+			}
+		});
+		RecoverButton.setBounds(10, 598, 84, 23);
+		contentPane.add(RecoverButton);
+		
+		JLabel lblNewLabel_5 = new JLabel("该按钮用于刷新界面，便于对相同的指令序列使用不同的调度算法用于对比算法差异");
+		lblNewLabel_5.setBounds(10, 611, 484, 42);
+		contentPane.add(lblNewLabel_5);
 	}
 
 	// 原来是在design页面创建的，现调整为私有成员方便设置值
